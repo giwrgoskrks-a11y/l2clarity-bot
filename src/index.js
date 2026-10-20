@@ -1,3 +1,24 @@
+import http from 'http';
+import {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  REST,
+  Routes,
+} from "discord.js";
+import { commands } from "./commands.js";
+import { registerHandlers } from "./handlers.js";
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('L2Clarity Bot is running!');
+});
+
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`HTTP server listening on port ${PORT}`);
+});
+
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {

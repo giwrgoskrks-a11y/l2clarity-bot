@@ -867,6 +867,6 @@ async function handleMemberJoin(member) {
       await member.timeout(RAID_TIMEOUT_MS, "L2Clarity anti-raid: rapid join burst");
       timeoutNote = `Applied a 10-minute timeout to ${member.user.tag}.`;
     } catch {
-      timeoutNote = `Could not timeout ${member.user.tag}; check the bot's role and Moderate Members permission.`; **…**
+      timeoutNote = `Could not timeout ${member.user.tag}; check the bot's role and Moderate Members permission.`;
 
 _This response is too long to display in full._

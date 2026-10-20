@@ -1,29 +1,10 @@
-import http from 'http';
-import {
-  Client,
-  GatewayIntentBits,
-  Partials,
-  REST,
-  Routes,
-} from "discord.js";
-import { commands } from "./commands.js";
-import { registerHandlers } from "./handlers.js";
-
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('L2Clarity Bot is running!');
-});
-
-const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => {
-  console.log(`HTTP server listening on port ${PORT}`);
-});
-
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {
-  console.error("Missing DISCORD_TOKEN. Add it in Render Environment variables.");
+  console.error("CRITICAL: Missing DISCORD_TOKEN in environment variables!");
   process.exit(1);
+} else {
+  console.log("DISCORD_TOKEN is present, attempting to login to Discord...");
 }
 
 const client = new Client({
@@ -58,6 +39,6 @@ client.on("error", (error) => {
 });
 
 client.login(token).catch((error) => {
-  console.error("[L2Clarity] Could not log in. Check DISCORD_TOKEN.", error);
+  console.error("[L2Clarity] Could not log in. Detailed error:", error);
   process.exitCode = 1;
 });

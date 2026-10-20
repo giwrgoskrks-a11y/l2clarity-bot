@@ -1,3 +1,4 @@
+import http from 'http';
 import {
   Client,
   GatewayIntentBits,
@@ -8,10 +9,21 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
+// HTTP server για το Render Web Service
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('L2Clarity Bot is running!');
+});
+
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`HTTP server listening on port ${PORT}`);
+});
+
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {
-  console.error("Missing DISCORD_TOKEN. Add it in Replit Secrets, then restart the bot.");
+  console.error("Missing DISCORD_TOKEN. Add it in Render Environment variables.");
   process.exit(1);
 }
 
@@ -26,7 +38,7 @@ const client = new Client({
 
 registerHandlers(client);
 
-client.once("clientReady", async (readyClient) => {
+client.once("ready", async (readyClient) => {
   console.info(`[L2Clarity] Connected as ${readyClient.user.tag}.`);
 
   try {
@@ -35,20 +47,22 @@ client.once("clientReady", async (readyClient) => {
       body: commands,
     });
     console.info(`[L2Clarity] Registered ${commands.length} global slash commands.`);
-  } catch {
+  } catch (error) {
     console.error(
-      "[L2Clarity] Could not register slash commands. Check the bot's Discord application and permissions.",
+      "[L2Clarity] Could not register slash commands. Check permissions.",
+      error
     );
   }
 });
 
-client.on("error", () => {
-  console.error("[L2Clarity] Discord connection error.");
+client.on("error", (error) => {
+  console.error("[L2Clarity] Discord connection error:", error);
 });
 
-client.login(token).catch(() => {
+client.login(token).catch((error) => {
   console.error(
-    "[L2Clarity] Could not log in. Check DISCORD_TOKEN and the bot application's settings.",
+    "[L2Clarity] Could not log in. Check DISCORD_TOKEN.",
+    error
   );
   process.exitCode = 1;
 });

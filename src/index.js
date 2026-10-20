@@ -9,7 +9,6 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// HTTP server για το Render Web Service
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
@@ -32,14 +31,16 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildPresences,
   ],
-  partials: [Partials.Channel, Partials.Message],
+  partials: [Partials.Channel, Partials.Message, Partials.GuildMember],
 });
 
 registerHandlers(client);
 
 client.once("ready", async (readyClient) => {
-  console.info(`[L2Clarity] Connected as ${readyClient.user.tag}.`);
+  console.info(`[L2Clarity] Connected successfully as ${readyClient.user.tag}!`);
 
   try {
     const rest = new REST({ version: "10" }).setToken(token);
@@ -48,10 +49,7 @@ client.once("ready", async (readyClient) => {
     });
     console.info(`[L2Clarity] Registered ${commands.length} global slash commands.`);
   } catch (error) {
-    console.error(
-      "[L2Clarity] Could not register slash commands. Check permissions.",
-      error
-    );
+    console.error("[L2Clarity] Could not register slash commands:", error);
   }
 });
 
@@ -60,9 +58,6 @@ client.on("error", (error) => {
 });
 
 client.login(token).catch((error) => {
-  console.error(
-    "[L2Clarity] Could not log in. Check DISCORD_TOKEN.",
-    error
-  );
+  console.error("[L2Clarity] Could not log in. Check DISCORD_TOKEN.", error);
   process.exitCode = 1;
 });

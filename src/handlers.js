@@ -1,3 +1,4 @@
+import http from 'http';
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -8,6 +9,17 @@ import {
   StringSelectMenuBuilder,
 } from "discord.js";
 import { getGuildSettings, updateGuildSettings } from "./settings.js";
+
+// HTTP server gia to Render Web Service (oste na min vgazei No open ports detected)
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('L2Clarity Bot handlers running!');
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`HTTP server listening on port ${PORT}`);
+});
 
 const joinTimesByGuild = new Map();
 const raidAlertedAtByGuild = new Map();

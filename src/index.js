@@ -9,6 +9,7 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
+// Ο HTTP server που κρατάει το Render ζωντανό
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
@@ -24,8 +25,6 @@ const token = process.env.DISCORD_TOKEN;
 if (!token) {
   console.error("CRITICAL: Missing DISCORD_TOKEN in environment variables!");
   process.exit(1);
-} else {
-  console.log("DISCORD_TOKEN is present, attempting to login to Discord...");
 }
 
 const client = new Client({

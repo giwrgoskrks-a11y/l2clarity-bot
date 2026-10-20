@@ -1,0 +1,14 @@
+{
+  "name": "@workspace/l2clarity-bot",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js",
+    "start": "node src/index.js",
+    "check": "node --check src/index.js && node --check src/commands.js && node --check src/settings.js && node --check src/handlers.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3"
+  }
+}

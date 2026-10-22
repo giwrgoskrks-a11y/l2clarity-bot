@@ -40,7 +40,7 @@ const client = new Client({
 
 registerHandlers(client);
 
-client.once("clientReady", async (readyClient) => {
+client.once("ready", async (readyClient) => {
   console.info(`[L2Clarity] Connected successfully as ${readyClient.user.tag}!`);
 
   try {

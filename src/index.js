@@ -36,11 +36,14 @@ const client = new Client({
     GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Channel, Partials.Message, Partials.GuildMember],
+  // Ρύθμιση για αποφυγή κολλήματος στο WebSocket handshake
+  ws: {
+    large_threshold: 250,
+  }
 });
 
 registerHandlers(client);
 
-// Event όταν το bot συνδεθεί επιτυχώς στο Discord
 client.once("ready", async (readyClient) => {
   console.info(`[L2Clarity] Connected successfully as ${readyClient.user.tag}!`);
 
@@ -55,29 +58,16 @@ client.once("ready", async (readyClient) => {
   }
 });
 
-// Καταγραφή σφαλμάτων Discord Client
 client.on("error", (error) => {
   console.error("[L2Clarity] Discord connection error:", error);
 });
 
-// Προσπάθεια σύνδεσης με Timeout ελέγχου δικτύου
-console.log("[L2Clarity] Elegxos token prin to login...");
-if (!token) {
-  console.log("[L2Clarity] TO TOKEN LEIPEI!");
-} else {
-  console.log("[L2Clarity] To token yparxei, trexei to client.login()...");
-}
-
-const loginTimeout = setTimeout(() => {
-  console.error("[L2Clarity] WARNING: client.login() is taking too long. Network/Firewall block suspected!");
-}, 10000);
+console.log("[L2Clarity] Starting login sequence with network options...");
 
 client.login(token)
   .then(() => {
-    clearTimeout(loginTimeout);
-    console.log("[L2Clarity] Auth epituxis!");
+    console.log("[L2Clarity] login() resolved successfully!");
   })
   .catch((error) => {
-    clearTimeout(loginTimeout);
-    console.error("[L2Clarity] SFALMA SYNDESIS:", error);
+    console.error("[L2Clarity] FATAL LOGIN ERROR:", error);
   });

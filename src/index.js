@@ -9,7 +9,7 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// HTTP server για να κρατάει το Render ενεργό στη θύρα 10000
+// 1. HTTP server για να κρατάει το Render ενεργό στη θύρα 10000
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
@@ -17,50 +17,63 @@ const server = http.createServer((req, res) => {
 
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
-  console.log(`HTTP server listening on port ${PORT}`);
+  console.log(`[DEBUG] HTTP server listening on port ${PORT}`);
 });
 
+// 2. Έλεγχος Token
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {
-  console.error("CRITICAL: Missing DISCORD_TOKEN!");
+  console.error("[CRITICAL ERROR] Missing DISCORD_TOKEN environment variable!");
   process.exit(1);
+} else {
+  console.log("[DEBUG] DISCORD_TOKEN is present (Length:", token.length, ")");
 }
 
+// 3. Δημιουργία Discord Client με βασικά Intents για αποφυγή κολλημάτων
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Channel, Partials.Message, Partials.GuildMember],
   restTimeOffset: 0,
   failIfNotExists: false,
 });
 
+// 4. Debug Listeners για το WebSocket & Συνδέσεις
+client.on("debug", (info) => {
+  // Εκτυπώνει τα εσωτερικά μηνύματα σύνδεσης του Discord (βοηθάει απίστευτα στο debug)
+  console.log(`[DISCORD DEBUG]`, info);
+});
+
+client.on("warn", (info) => {
+  console.warn(`[DISCORD WARN]`, info);
+});
+
+client.on("error", (error) => {
+  console.error("[DISCORD ERROR] WebSocket error:", error);
+});
+
 registerHandlers(client);
 
 client.once("ready", async (readyClient) => {
-  console.info(`[L2Clarity] Connected successfully as ${readyClient.user.tag}!`);
+  console.info(`[SUCCESS] Connected successfully as ${readyClient.user.tag}!`);
   try {
     const rest = new REST({ version: "10" }).setToken(token);
     await rest.put(Routes.applicationCommands(readyClient.application.id), {
       body: commands,
     });
-    console.info(`[L2Clarity] Registered commands.`);
+    console.info(`[SUCCESS] Registered application commands.`);
   } catch (error) {
-    console.error("[L2Clarity] Command registration error:", error);
+    console.error("[ERROR] Command registration failed:", error);
   }
 });
 
-client.on("error", (error) => {
-  console.error("[L2Clarity] Discord WebSocket error:", error);
-});
-
-console.log("[L2Clarity] Attempting final login...");
+// 5. Προσπάθεια Σύνδεσης με Catch για τυχόν σφάλματα αυθεντικοποίησης
+console.log("[DEBUG] Attempting client.login()...");
 
 client.login(token).catch((err) => {
-  console.error("[L2Clarity] Login failed with error:", err);
+  console.error("[CRITICAL ERROR] Login failed completely! Details:", err);
 });

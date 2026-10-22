@@ -9,7 +9,7 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// O HTTP server pou krataei to Render zontano
+// HTTP server για να κρατάει το Render ενεργό (UptimeRobot)
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
@@ -40,6 +40,7 @@ const client = new Client({
 
 registerHandlers(client);
 
+// Event όταν το bot συνδεθεί επιτυχώς στο Discord
 client.once("ready", async (readyClient) => {
   console.info(`[L2Clarity] Connected successfully as ${readyClient.user.tag}!`);
 
@@ -54,11 +55,19 @@ client.once("ready", async (readyClient) => {
   }
 });
 
+// Καταγραφή σφαλμάτων Discord Client
 client.on("error", (error) => {
   console.error("[L2Clarity] Discord connection error:", error);
 });
 
-client.login(token).catch((error) => {
-  console.error("[L2Clarity] Could not log in. Detailed error:", error);
-  process.exitCode = 1;
-});
+// Προσπάθεια σύνδεσης με καταγραφή λεπτομερών σφαλμάτων
+console.log("[L2Clarity] Attempting to log in to Discord...");
+
+client.login(token)
+  .then(() => {
+    console.log("[L2Clarity] login() process initiated.");
+  })
+  .catch((error) => {
+    console.error("[L2Clarity] CRITICAL: Could not log in. Detailed error:", error);
+    process.exitCode = 1;
+  });

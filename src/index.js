@@ -60,18 +60,24 @@ client.on("error", (error) => {
   console.error("[L2Clarity] Discord connection error:", error);
 });
 
-// --- ΕΔΩ ΜΠΑΙΝΕΙ ΤΟ ΝΕΟ ΤΜΗΜΑ ΜΕ ΤΑ LOGS ΣΤΟ ΤΕΛΟΣ ---
+// Προσπάθεια σύνδεσης με Timeout ελέγχου δικτύου
 console.log("[L2Clarity] Elegxos token prin to login...");
 if (!token) {
-  console.error("[L2Clarity] TO TOKEN LEIPEI!");
+  console.log("[L2Clarity] TO TOKEN LEIPEI!");
 } else {
   console.log("[L2Clarity] To token yparxei, trexei to client.login()...");
 }
 
+const loginTimeout = setTimeout(() => {
+  console.error("[L2Clarity] WARNING: client.login() is taking too long. Network/Firewall block suspected!");
+}, 10000);
+
 client.login(token)
   .then(() => {
+    clearTimeout(loginTimeout);
     console.log("[L2Clarity] Auth epituxis!");
   })
   .catch((error) => {
+    clearTimeout(loginTimeout);
     console.error("[L2Clarity] SFALMA SYNDESIS:", error);
   });

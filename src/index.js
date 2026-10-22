@@ -9,7 +9,7 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// 1. HTTP server για να κρατάει το Render ενεργό στη θύρα 10000
+// HTTP server για να κρατάει το Render ενεργό στη θύρα 10000
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
@@ -20,7 +20,6 @@ server.listen(PORT, () => {
   console.log(`[DEBUG] HTTP server listening on port ${PORT}`);
 });
 
-// 2. Έλεγχος Token
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {
@@ -30,21 +29,20 @@ if (!token) {
   console.log("[DEBUG] DISCORD_TOKEN is present (Length:", token.length, ")");
 }
 
-// 3. Δημιουργία Discord Client με βασικά Intents για αποφυγή κολλημάτων
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Channel, Partials.Message, Partials.GuildMember],
   restTimeOffset: 0,
   failIfNotExists: false,
 });
 
-// 4. Debug Listeners για το WebSocket & Συνδέσεις
 client.on("debug", (info) => {
-  // Εκτυπώνει τα εσωτερικά μηνύματα σύνδεσης του Discord (βοηθάει απίστευτα στο debug)
   console.log(`[DISCORD DEBUG]`, info);
 });
 
@@ -71,9 +69,10 @@ client.once("ready", async (readyClient) => {
   }
 });
 
-// 5. Προσπάθεια Σύνδεσης με Catch για τυχόν σφάλματα αυθεντικοποίησης
 console.log("[DEBUG] Attempting client.login()...");
 
-client.login(token).catch((err) => {
-  console.error("[CRITICAL ERROR] Login failed completely! Details:", err);
+client.login(token).then(() => {
+  console.log("[SUCCESS] client.login() resolved successfully!");
+}).catch((err) => {
+  console.error("[CRITICAL ERROR] Failed to login to Discord:", err);
 });

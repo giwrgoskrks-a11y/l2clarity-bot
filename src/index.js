@@ -9,7 +9,7 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// HTTP server για να κρατάει το Render ενεργό (UptimeRobot)
+// HTTP server για να κρατάει το Render ενεργό στη θύρα 10000
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');

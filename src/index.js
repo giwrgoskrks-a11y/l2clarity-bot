@@ -9,24 +9,22 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// HTTP server για να κρατάει το Render ενεργό στη θύρα 10000
+// Ελαφρύς HTTP server για τα health checks του Render
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
 });
 
 const PORT = process.env.PORT || 10000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`[DEBUG] HTTP server listening on port ${PORT}`);
 });
 
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {
-  console.error("[CRITICAL ERROR] Missing DISCORD_TOKEN environment variable!");
+  console.error("[CRITICAL ERROR] Missing DISCORD_TOKEN!");
   process.exit(1);
-} else {
-  console.log("[DEBUG] DISCORD_TOKEN is present (Length:", token.length, ")");
 }
 
 const client = new Client({
@@ -46,12 +44,8 @@ client.on("debug", (info) => {
   console.log(`[DISCORD DEBUG]`, info);
 });
 
-client.on("warn", (info) => {
-  console.warn(`[DISCORD WARN]`, info);
-});
-
 client.on("error", (error) => {
-  console.error("[DISCORD ERROR] WebSocket error:", error);
+  console.error("[DISCORD ERROR]:", error);
 });
 
 registerHandlers(client);
@@ -69,10 +63,5 @@ client.once("ready", async (readyClient) => {
   }
 });
 
-console.log("[DEBUG] Attempting client.login()...");
-
-client.login(token).then(() => {
-  console.log("[SUCCESS] client.login() resolved successfully!");
-}).catch((err) => {
-  console.error("[CRITICAL ERROR] Failed to login to Discord:", err);
-});
+console.log("[DEBUG] Logging in to Discord...");
+client.login(token);

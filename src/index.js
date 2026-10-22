@@ -60,14 +60,18 @@ client.on("error", (error) => {
   console.error("[L2Clarity] Discord connection error:", error);
 });
 
-// Προσπάθεια σύνδεσης με καταγραφή λεπτομερών σφαλμάτων
-console.log("[L2Clarity] Attempting to log in to Discord...");
+// --- ΕΔΩ ΜΠΑΙΝΕΙ ΤΟ ΝΕΟ ΤΜΗΜΑ ΜΕ ΤΑ LOGS ΣΤΟ ΤΕΛΟΣ ---
+console.log("[L2Clarity] Elegxos token prin to login...");
+if (!token) {
+  console.error("[L2Clarity] TO TOKEN LEIPEI!");
+} else {
+  console.log("[L2Clarity] To token yparxei, trexei to client.login()...");
+}
 
 client.login(token)
   .then(() => {
-    console.log("[L2Clarity] login() process initiated.");
+    console.log("[L2Clarity] Auth epituxis!");
   })
   .catch((error) => {
-    console.error("[L2Clarity] CRITICAL: Could not log in. Detailed error:", error);
-    process.exitCode = 1;
+    console.error("[L2Clarity] SFALMA SYNDESIS:", error);
   });

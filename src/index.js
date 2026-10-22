@@ -9,7 +9,7 @@ import {
 import { commands } from "./commands.js";
 import { registerHandlers } from "./handlers.js";
 
-// Ο HTTP server που κρατάει το Render ζωντανό
+// O HTTP server pou krataei to Render zontano
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('L2Clarity Bot is running!');
@@ -40,7 +40,7 @@ const client = new Client({
 
 registerHandlers(client);
 
-client.once("ready", async (readyClient) => {
+client.once("clientReady", async (readyClient) => {
   console.info(`[L2Clarity] Connected successfully as ${readyClient.user.tag}!`);
 
   try {
